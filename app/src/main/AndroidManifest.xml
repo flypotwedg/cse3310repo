@@ -10,6 +10,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Andthatiskhurooj">
         <activity
+            android:name=".forgotPassword"
+            android:exported="false" />
+        <activity
+            android:name=".VendorLogin"
+            android:exported="false" />
+        <activity
+            android:name=".VendorHomePage"
+            android:exported="false" />
+        <activity
+            android:name=".UserHomePage"
+            android:exported="false" />
+        <activity
+            android:name=".RegisterVendor"
+            android:exported="false" />
+        <activity
             android:name=".RegisterUser"
             android:exported="false" />
         <activity

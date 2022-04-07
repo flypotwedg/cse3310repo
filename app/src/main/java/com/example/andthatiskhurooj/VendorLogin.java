@@ -3,7 +3,6 @@ package com.example.andthatiskhurooj;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
@@ -19,42 +18,19 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-
-    public TextView register, forgotPassword;
+public class VendorLogin extends AppCompatActivity implements View.OnClickListener{
+    public TextView register;
     private EditText editEmail, editPassword;
     private Button signIn;
     private Button VendorsignIn;
     public ProgressBar progressBar;
     private FirebaseAuth mAuth;
 
-
-
-
-
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-
-
-        VendorsignIn = (Button) findViewById(R.id.VendorLogin);
-        VendorsignIn.setOnClickListener(this);
-
-        forgotPassword = (TextView) findViewById(R.id.forgotPassword);
-        forgotPassword.setOnClickListener(this);
-
+        setContentView(R.layout.activity_vendor_login);
 
         register = (TextView) findViewById(R.id.register);
         register.setOnClickListener(this);
@@ -64,40 +40,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         editPassword = (EditText) findViewById(R.id.password);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         mAuth = FirebaseAuth.getInstance();
-
-
     }
 
-    @Override
     public void onClick(View view) {
         if(view.getId() == R.id.register)
         {
-            startActivity(new Intent(this, RegisterUser.class));
+            startActivity(new Intent(this, RegisterVendor.class));
         }
         else if(view.getId()==R.id.signIN)
         {
-            userLogin();
+            VendorLogin();
         }
-       else if(view.getId() == R.id.VendorLogin)
-        {
-            startActivity(new Intent(this, VendorLogin.class));
-        }
-       else if(view.getId() == R.id.forgotPassword)
+        else if(view.getId()==R.id.forgotPassword)
         {
             startActivity(new Intent(this, forgotPassword.class));
         }
-       else
+        else
         {
+
 
         }
 
 
     }
-    public void userLogin() {
+
+
+    public void VendorLogin() {
         String email = editEmail.getText().toString().trim();
         String password = editPassword.getText().toString().trim();
-
-
 
 
         if (email.isEmpty()) {
@@ -118,20 +88,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
                     if (task.isSuccessful()) {
-                        //go to home page for user
-
-                            Intent intent = new Intent(MainActivity.this, UserHomePage.class);
+                        FirebaseUser vendor = FirebaseAuth.getInstance().getCurrentUser();
+                        if(vendor.isEmailVerified()) {
+                            //go to home page for vendor
+                            Intent intent = new Intent(VendorLogin.this, VendorHomePage.class);
                             startActivity(intent);
                         }
+                        else
+                        {
+                            vendor.sendEmailVerification();
+                            Toast.makeText(VendorLogin.this, "A link to verify your account has been sent to your Email", Toast.LENGTH_LONG).show();
+                        }
 
-                     else {
-                        Toast.makeText(MainActivity.this, "Login Failed ", Toast.LENGTH_SHORT).show();
-                        progressBar.setVisibility(View.GONE);
 
-
-
+                    } else {
+                        Toast.makeText(VendorLogin.this, "Login Failed", Toast.LENGTH_LONG).show();
                     }
-
                 }
             });
         }

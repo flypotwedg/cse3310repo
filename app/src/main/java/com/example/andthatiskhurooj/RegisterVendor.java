@@ -1,16 +1,13 @@
 package com.example.andthatiskhurooj;
 
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -22,109 +19,90 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class RegisterUser extends AppCompatActivity implements View.OnClickListener{
+import java.util.ArrayList;
 
-    private TextView  registerUser, registerVendor;
+public class RegisterVendor extends AppCompatActivity implements View.OnClickListener{
+
+    private TextView registerVendor;
     private EditText editTextFullName, editTextPhoneNumber, editTextEmail, editTextPassword;
     private ProgressBar progressBar;
     private FirebaseAuth mAuth;
-    public int userID = 0;
+    private CheckBox checkBox;;
+    int vendorID = 1000;
+    //static ArrayList<String> = new ArrayList
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register_user);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        setContentView(R.layout.activity_register_vendor);
 
         mAuth = FirebaseAuth.getInstance();
 
-        registerVendor = (Button) findViewById(R.id.BecomeAvendor);
+        registerVendor = (Button) findViewById(R.id.registerVendor);
         registerVendor.setOnClickListener(this);
 
-        registerUser = (Button) findViewById(R.id.registerUser);
-        registerUser.setOnClickListener(this);
-
-
-
-
-
-
-        editTextFullName = (EditText) findViewById(R.id.fullname);
-        editTextPhoneNumber = (EditText) findViewById(R.id.phonenumber);
-        editTextEmail = (EditText) findViewById(R.id.email);
-        editTextPassword = (EditText) findViewById(R.id.password);
+        editTextFullName = (EditText) findViewById(R.id.companyname);
+        editTextPhoneNumber = (EditText) findViewById(R.id.companyphonenumber);
+        editTextEmail = (EditText) findViewById(R.id.companyemail);
+        editTextPassword = (EditText) findViewById(R.id.companypassword);
+        checkBox = (CheckBox) findViewById(R.id.checkBox);
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-
-
-
-
-
-
     }
-
     public void onClick(View view)
     {
-        if(view.getId() == R.id.registerUser)
-        {
-            registerUser();
+        if (view.getId() == R.id.registerVendor) {
+            registerVendor();
         }
-        else if(view.getId() == R.id.BecomeAvendor)
-        {
-            Intent intent = new Intent(this,RegisterVendor.class);
-            startActivity(intent);
-       // startActivity(new Intent(this, RegisterVendor.class));
-        }
-        else
-        {
-
-        }
-
     }
 
-    public void registerUser()
+    public void registerVendor()
     {
-        String email = editTextEmail.getText().toString().trim();
-        String password = editTextPassword.getText().toString().trim();
-        String phoneNumber = editTextPhoneNumber.getText().toString().trim();
-        String FullName = editTextFullName.getText().toString().trim();
+        String companyemail = editTextEmail.getText().toString().trim();
+        String companypassword = editTextPassword.getText().toString().trim();
+        String companyphoneNumber = editTextPhoneNumber.getText().toString().trim();
+        String companyFullName = editTextFullName.getText().toString().trim();
 
-        if(FullName.isEmpty())
+        if(companyFullName.isEmpty())
         {
-            editTextFullName.setError("Full name is required");
+            editTextFullName.setError("A Company Name is required");
             editTextFullName.requestFocus();
         }
-        else if(phoneNumber.isEmpty())
+        else if(companyphoneNumber.isEmpty())
         {
-            editTextPhoneNumber.setError("Phone number is required");
+            editTextPhoneNumber.setError("A Phone number is required");
             editTextPhoneNumber.requestFocus();
         }
-        else if(password.isEmpty())
+        else if(companypassword.isEmpty())
         {
             editTextPassword.setError("A password is required");
             editTextPassword.requestFocus();
         }
-        else if(email.isEmpty())
+        else if(companyemail.isEmpty())
         {
             editTextEmail.setError("An email is required");
             editTextEmail.requestFocus();
         }
-        else if(Patterns.EMAIL_ADDRESS.matcher(email).matches() == false)
+        else if(Patterns.EMAIL_ADDRESS.matcher(companyemail).matches() == false)
         {
             editTextEmail.setError("Please provide a valid email");
             editTextEmail.requestFocus();
         }
-        else if(Patterns.PHONE.matcher(phoneNumber).matches() == false)
+        else if(Patterns.PHONE.matcher(companyphoneNumber).matches() == false)
         {
             editTextPhoneNumber.setError("Please provide a valid Phone Number");
             editTextPhoneNumber.requestFocus();
-
         }
-        else if(password.length()<8)
+        else if(companypassword.length()<8)
         {
             editTextPassword.setError("Please create a password that is at least 8 characters");
             editTextPassword.requestFocus();
+
+        }
+        else if(checkBox.isChecked() == false)
+        {
+            checkBox.setError("Please agree to the stated terms");
+            checkBox.requestFocus();
 
         }
         else
@@ -132,26 +110,26 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
 
         }
         progressBar.setVisibility(View.VISIBLE);
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        mAuth.createUserWithEmailAndPassword(companyemail, companypassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
 
                 if(task.isSuccessful())
                 {
 
-                    User u1 = new User(FullName, email, phoneNumber, userID);
-                    FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(u1).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    Vendor v1 = new Vendor(companyFullName, companyemail, companyphoneNumber, vendorID);
+                    FirebaseDatabase.getInstance().getReference("Vendors").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(v1).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful())
                             {
-                                Toast.makeText(RegisterUser.this, "User has been registered successfully",Toast.LENGTH_LONG).show();
+                                Toast.makeText(RegisterVendor.this, "Vendor has been registered successfully",Toast.LENGTH_LONG).show();
                                 progressBar.setVisibility(View.GONE);
 
                             }
                             else
                             {
-                                Toast.makeText(RegisterUser.this, "Failed to register User. Try again", Toast.LENGTH_LONG).show();
+                                Toast.makeText(RegisterVendor.this, "Failed to register Vendor. Try again", Toast.LENGTH_LONG).show();
                                 progressBar.setVisibility(View.GONE);
                             }
 
@@ -160,18 +138,11 @@ public class RegisterUser extends AppCompatActivity implements View.OnClickListe
                 }
                 else
                 {
-                    Toast.makeText(RegisterUser.this, "Failed to register User. Try again", Toast.LENGTH_LONG).show();
+                    Toast.makeText(RegisterVendor.this, "Failed to register Vendor. Try again", Toast.LENGTH_LONG).show();
                     progressBar.setVisibility(View.GONE);
                 }
             }
         });
 
-
-
-
-
     }
-
-
-
 }
