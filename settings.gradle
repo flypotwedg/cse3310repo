@@ -12,5 +12,6 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "andthatiskhurooj"
-include ':app'
+rootProject.name = "vendor"
+include ':vendorProfile'
+include ':myapplication'
